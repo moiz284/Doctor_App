@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "dev:full": "concurrently \"npm run dev\" \"cd ../../nest-projects/doctor-backend && npm run start:dev\""
   },
   "dependencies": {
     "react": "19.1.0",
