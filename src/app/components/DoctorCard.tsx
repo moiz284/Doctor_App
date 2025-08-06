@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
+import BookingModal from "./BookingModale";
+import { useState } from "react";
 interface Doctor {
   id: number;
   name: string;
@@ -15,6 +16,7 @@ interface DoctorCardProps {
 }
 
 export default function DoctorCard({ doctor, onDelete }: DoctorCardProps) {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
@@ -29,12 +31,15 @@ export default function DoctorCard({ doctor, onDelete }: DoctorCardProps) {
 
     try {
       const token = localStorage.getItem("access_token");
-      const response = await fetch(`http://localhost:3001/doctors/${doctor.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3001/doctors/${doctor.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         window.location.reload();
@@ -56,7 +61,9 @@ export default function DoctorCard({ doctor, onDelete }: DoctorCardProps) {
               <span className="text-2xl">👨‍⚕️</span>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">{doctor.name}</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                {doctor.name}
+              </h3>
               <p className="text-sm text-gray-500">{doctor.email}</p>
             </div>
           </div>
@@ -64,28 +71,28 @@ export default function DoctorCard({ doctor, onDelete }: DoctorCardProps) {
             <button
               onClick={() => router.push(`/dashboard/edit/${doctor.id}`)}
               className="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-50 transition-colors"
-              title="Edit doctor"
-            >
+              title="Edit doctor">
               ✏️
             </button>
             <button
               onClick={handleDelete}
               className="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors"
-              title="Delete doctor"
-            >
+              title="Delete doctor">
               🗑️
             </button>
           </div>
         </div>
-        
+
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-600">Specialty:</span>
+            <span className="text-sm font-medium text-gray-600">
+              Specialty:
+            </span>
             <span className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
               {doctor.specialty}
             </span>
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <span className="text-sm font-medium text-gray-600">ID:</span>
             <span className="text-sm text-gray-500">#{doctor.id}</span>
@@ -95,18 +102,16 @@ export default function DoctorCard({ doctor, onDelete }: DoctorCardProps) {
         <div className="mt-4 pt-4 border-t border-gray-100">
           <div className="flex space-x-2">
             <button
-              onClick={() => router.push(`/dashboard/edit/${doctor.id}`)}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors"
-            >
-              Edit
-            </button>
-            <button
-              onClick={handleDelete}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg text-sm transition-colors"
-            >
-              Delete
+              onClick={() => setOpen(true)}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Book Appointment
             </button>
           </div>
+          <BookingModal
+            doctor={doctor}
+            isOpen={open}
+            onClose={() => setOpen(false)}
+          />
         </div>
       </div>
     </div>
