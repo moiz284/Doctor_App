@@ -6,22 +6,37 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://root:mbi20sep@localhost:3306/doctors_listing_db"
 }
 model Doctor {
   id       Int    @id @default(autoincrement())
   name     String
   email    String @unique
   specialty String
+  booking Booking[]
 }
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
   password String
   createdAt DateTime @default(now())
+  booking Booking[]
+
 }
+model Booking {
+  id         Int      @id @default(autoincrement())
+  doctor     Doctor   @relation(fields: [doctorId], references: [id])
+  doctorId   Int
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  date       DateTime
+  time       String   // e.g., '14:00' or use DateTime if using full timestamp
+  createdAt  DateTime @default(now())
+
+  @@unique([doctorId, date, time]) // prevent double booking
+}
+
